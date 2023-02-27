@@ -2,30 +2,26 @@
 #include <cstdlib>
 #include <ctime>
 #include "constants.h"
+#include "word.cpp"
+#include <bitset>
 
 using namespace std;
 
-void randomBytes(char* bytes, int n) {
-
-	int temp;
-
-	for (int i = 0; i < n; i++)
-	{
-		temp = rand();
-		bytes[i] = (char)(temp & 255);
-	}
-}
-
 int main() {
+	cout<<endl;
 
 	srand(time(NULL));
-	char key[KEYBYTES];
-	randomBytes(key, KEYBYTES);
 
-	for (int i = 0; i < KEYBYTES; i++){
-		cout << i << ": " << key[i] << '\n';
-	}
-		
+	unsigned char key[KEYBYTES];
+	unsigned char nonce[16];
+
+	randomBytes(key, KEYBYTES);
+	randomBytes(nonce, 16);
+
+	// for(int i = 0; i < 16; i++)
+	// 	cout<<bitset<8>(key[i])<<endl;
+
+
 
 	return 0;
 }
