@@ -1,5 +1,6 @@
 #include <iostream>
 #include "word.h"
+#include "state.h"
 
 using namespace std;
 

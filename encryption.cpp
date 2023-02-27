@@ -1,13 +1,13 @@
 #include <iostream>
-#include <math.h>
-#include "encryption.cpp"
 #include "constants.h"
 #include "state.h"
-#include "word.cpp"
+#include "word.h"
+#include "permutations.h"
+#include "encryption.h"
 
 using namespace std;
 
-int initialization(unsigned char* key, unsigned char* nonce) {
+ascon_state initialization(unsigned char* key, unsigned char* nonce) {
 	ascon_state S;
 
 	S.x[0] = IV;
@@ -16,6 +16,8 @@ int initialization(unsigned char* key, unsigned char* nonce) {
 	S.x[3] = loadBytes(nonce, 8);
 	S.x[4] = loadBytes(nonce + 8, 8);
 
+	//here smth wrong, need to check
+	P12(&S);
 
-
+	return S;
 }
