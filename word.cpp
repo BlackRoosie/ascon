@@ -14,12 +14,12 @@ void randomBytes(unsigned char* bytes, int n) {
 	}
 }
 
-uint64_t loadBytes(unsigned char* bytes, int n){
+uint64_t loadBytes(unsigned char bytes[], int n){
 
 	uint64_t word = 0;
 	for(int i = 0; i < n; i++){
 		word <<= 8;
-		word |= uint64_t(bytes[i]);
+		word |= uint64_t(bytes[i]);			//bytes[i] = 8 bits
 	}
 
 	return word;
