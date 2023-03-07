@@ -11,6 +11,6 @@ using namespace std;
 
 ascon_state initialization(unsigned char key[], unsigned char nonce[]) ;
 
-void processing_AD(ascon_state* s, unsigned char* ad);
+void processing_AD(ascon_state* s, unsigned char* ad, int adlen);
 
 #endif

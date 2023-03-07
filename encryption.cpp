@@ -5,6 +5,8 @@
 #include "word.h"
 #include "permutations.cpp"
 
+#include <bitset>
+
 using namespace std;
 
 ascon_state initialization(unsigned char key[], unsigned char nonce[]) {
@@ -27,24 +29,25 @@ ascon_state initialization(unsigned char key[], unsigned char nonce[]) {
 	return S;
 }
 
-void processing_AD(ascon_state* s, unsigned char* ad){
-	int adlen = sizeof(ad)/sizeof(char);
+void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
+	
 	int i = 0;
 	uint64_t ai;
 
 	if(adlen > 0){
 		while(adlen >= RATE){
-			ai = loadBytes(ad + i*1, 1);
-			//xor ai with first r bits Sr of S
-			s->x[0] ^= (ai << 56);
+
+			ai = loadBytes(ad + i*8, 8);
+			cout<<"ai: "<<bitset<64>(ai)<<endl;
+			s->x[0] ^= ai;
 			P6(s);	
 			adlen -= RATE;
 			i += 1;
 		}
 
-		ai = loadBytes(ad + i*8, 1);
-		ai = ((ai << 1) | 1) << (RATE-adlen-1);		// A||1||{0}*(r-1-(|A| mod r))
-		s->x[0] ^= (ai << 56);
+		ai = ((loadBytes(ad + i*8, 8) << 1) | 1 ) << ((RATE - adlen)*8 - 1);
+		cout<<"ai: "<<bitset<64>(ai)<<endl;
+		s->x[0] ^= ai;
 		P6(s);
 	}
 
@@ -52,3 +55,26 @@ void processing_AD(ascon_state* s, unsigned char* ad){
 
 }
 
+//to będzie zwracało ciphertext
+void processing_plaintext(ascon_state* s, unsigned char* plaintext, unsigned char* ciphertext){
+	int ptlen = sizeof(plaintext)/sizeof(char);
+	int i = 0;
+	uint64_t pi;
+	
+	while(ptlen >= RATE){
+		pi = loadBytes(plaintext + i*1, 1);
+		//xor ai with first r bits Sr of S
+		s->x[0] ^= (pi << 56);
+
+
+		// P6(s);	
+		ptlen -= RATE;
+		i += 1;
+	}
+
+	pi = loadBytes(plaintext + i*8, 1);
+	pi = ((pi << 1) | 1) << (RATE-ptlen-1);		// P||1||{0}*(r-1-(|P| mod r))
+	s->x[0] ^= (pi << 56);
+	P6(s);
+
+}

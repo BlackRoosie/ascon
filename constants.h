@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 const int KEYBYTES = 16;
-const int RATE = 8;
+const int RATE = 8;     //block size in bytes
 const int ROUNDS_PA = 12;
 const int ROUNDS_PB = 6;
 
