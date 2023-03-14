@@ -1,6 +1,8 @@
 #include "permutations.h"
 #include "state.h"
 
+#include <iostream>
+
 using namespace std;
 
 uint64_t rotation(uint64_t word, int shift){

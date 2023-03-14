@@ -45,10 +45,13 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 			i += 1;
 		}
 
-		ai = ((loadBytes(ad + i*8, 8) << 1) | 1 ) << ((RATE - adlen)*8 - 1);
-		cout<<"ai: "<<bitset<64>(ai)<<endl;
-		s->x[0] ^= ai;
-		P6(s);
+		//checking after while if there is still bits to create last block
+		if(adlen > 0){
+			ai = ((loadBytes(ad + i*8, adlen) << 1) | 1 ) << ((RATE - adlen)*8 - 1);
+			cout<<"ai: "<<bitset<64>(ai)<<endl;
+			s->x[0] ^= ai;
+			P6(s);
+		}
 	}
 
 	s->x[4] ^= 1;

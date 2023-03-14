@@ -50,21 +50,21 @@ void test(){
 	nonce[14] = 0x7e;
 	nonce[15] = 0x55;
 
-	unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
+	unsigned char ad[8] = {'A', 'S', 'C', 'O', 'N', 'x', 'x', 'x'};
 	int adlen = sizeof(ad);		//in bytes
 	// for(int i = 0; i < 5; i ++)
 	// 	cout<<bitset<8>(ad[i])<<endl;
 
 	ascon_state S = initialization(key, nonce);
 	cout<<"INITIALIZATION"<<endl;
-	for(int i = 0; i < 5; i ++)
-		cout<<bitset<64>(S.x[i])<<endl;
+	// for(int i = 0; i < 5; i ++)
+	// 	cout<<bitset<64>(S.x[i])<<endl;
 
-
+	cout<<"-----------------------------------------------"<<endl;
 	processing_AD(&S, ad, adlen);
 	cout<<"PROCESSING AD"<<endl;
-	for(int i = 0; i < 5; i ++)
-		cout<<bitset<64>(S.x[i])<<endl;
+	// for(int i = 0; i < 5; i ++)
+	// 	cout<<bitset<64>(S.x[i])<<endl;
 
 }
 
