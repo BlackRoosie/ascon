@@ -88,3 +88,19 @@ void processing_plaintext(ascon_state* s, unsigned char* plaintext, int ptlen, u
 	storeBytes(ciphertext + i*8, ci, ptlen);
 
 }
+
+//something wrong
+void finalization(ascon_state* s, unsigned char* key, unsigned char* tag){
+
+	const uint64_t K0 = loadBytes(key, 8);
+	const uint64_t K1 = loadBytes(key + 8, 8);
+
+	s->x[1] ^= K0;
+	s->x[2] ^= K1;
+	P12(s);
+	s->x[3] ^= K0;
+	s->x[4] ^= K1;
+
+	storeBytes(tag, s->x[3], 8);
+	storeBytes(tag + 8, s->x[4], 8);
+}

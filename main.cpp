@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void test(){
+void test_encryption(){
 
 	unsigned char key[KEYBYTES];
 	unsigned char nonce[16];
@@ -55,7 +55,7 @@ void test(){
 	// for(int i = 0; i < 5; i ++)
 	// 	cout<<bitset<8>(ad[i])<<endl;
 
-	unsigned char plain[10] = {'a', 's', 'c', 'o', 'n'};
+	unsigned char plain[5] = {'a', 's', 'c', 'o', 'n'};
 	int ptlen = sizeof(plain);
 
 	unsigned char cipher[ptlen];
@@ -63,19 +63,32 @@ void test(){
 	cout<<"INITIALIZATION"<<endl;
 	ascon_state S = initialization(key, nonce);
 	// for(int i = 0; i < 5; i ++)
-	// 	cout<<bitset<64>(S.x[i])<<endl;
+	// 	cout<<S.x[i]<<endl;
+		// cout<<bitset<64>(S.x[i])<<endl;
 
 	cout<<"-----------------------------------------------"<<endl;
 	cout<<"PROCESSING AD"<<endl;
 	processing_AD(&S, ad, adlen);
 	// for(int i = 0; i < 5; i ++)
+	// 	cout<<S.x[i]<<endl;
 	// 	cout<<bitset<64>(S.x[i])<<endl;
 
 	cout<<"-----------------------------------------------"<<endl;
 	cout<<"PROCESSING PLAINTEXT"<<endl;
 	processing_plaintext(&S, plain, ptlen, cipher);
-	for(int i = 0; i < ptlen; i ++)
-		cout<<bitset<8>(cipher[i])<<'\t';
+	// for(int i = 0; i < ptlen; i ++)
+	// 	cout<<S.x[i]<<endl;
+	// 	cout<<bitset<8>(cipher[i])<<'\t';
+
+	cout<<"-----------------------------------------------"<<endl;
+	cout<<"FINALIZATION"<<endl;
+	unsigned char tag[16]; 
+	finalization(&S, key, tag);
+	cout<<"tag:"<<endl;
+	for(int i = 0; i < 16; i++)
+		cout<<bitset<8>(tag[i])<<'\t';
+
+
 }
 
 
@@ -83,7 +96,7 @@ int main() {
 	cout<<endl;
 
 	srand(time(NULL));
-	test();
+	test_encryption();
 
 	// unsigned char key[KEYBYTES];
 	// unsigned char nonce[16];
