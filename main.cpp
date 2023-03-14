@@ -50,22 +50,32 @@ void test(){
 	nonce[14] = 0x7e;
 	nonce[15] = 0x55;
 
-	unsigned char ad[8] = {'A', 'S', 'C', 'O', 'N', 'x', 'x', 'x'};
+	unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
 	int adlen = sizeof(ad);		//in bytes
 	// for(int i = 0; i < 5; i ++)
 	// 	cout<<bitset<8>(ad[i])<<endl;
 
-	ascon_state S = initialization(key, nonce);
+	unsigned char plain[10] = {'a', 's', 'c', 'o', 'n'};
+	int ptlen = sizeof(plain);
+
+	unsigned char cipher[ptlen];
+
 	cout<<"INITIALIZATION"<<endl;
+	ascon_state S = initialization(key, nonce);
 	// for(int i = 0; i < 5; i ++)
 	// 	cout<<bitset<64>(S.x[i])<<endl;
 
 	cout<<"-----------------------------------------------"<<endl;
-	processing_AD(&S, ad, adlen);
 	cout<<"PROCESSING AD"<<endl;
+	processing_AD(&S, ad, adlen);
 	// for(int i = 0; i < 5; i ++)
 	// 	cout<<bitset<64>(S.x[i])<<endl;
 
+	cout<<"-----------------------------------------------"<<endl;
+	cout<<"PROCESSING PLAINTEXT"<<endl;
+	processing_plaintext(&S, plain, ptlen, cipher);
+	for(int i = 0; i < ptlen; i ++)
+		cout<<bitset<8>(cipher[i])<<'\t';
 }
 
 

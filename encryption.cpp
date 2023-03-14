@@ -38,7 +38,7 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 		while(adlen >= RATE){
 
 			ai = loadBytes(ad + i*8, 8);
-			cout<<"ai: "<<bitset<64>(ai)<<endl;
+			// cout<<"ai: "<<bitset<64>(ai)<<endl;
 			s->x[0] ^= ai;
 			P6(s);	
 			adlen -= RATE;
@@ -48,7 +48,7 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 		//checking after while if there is still bits to create last block
 		if(adlen > 0){
 			ai = ((loadBytes(ad + i*8, adlen) << 1) | 1 ) << ((RATE - adlen)*8 - 1);
-			cout<<"ai: "<<bitset<64>(ai)<<endl;
+			// cout<<"ai: "<<bitset<64>(ai)<<endl;
 			s->x[0] ^= ai;
 			P6(s);
 		}
@@ -58,26 +58,33 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 
 }
 
-//to będzie zwracało ciphertext
-void processing_plaintext(ascon_state* s, unsigned char* plaintext, unsigned char* ciphertext){
-	int ptlen = sizeof(plaintext)/sizeof(char);
+void processing_plaintext(ascon_state* s, unsigned char* plaintext, int ptlen, unsigned char* ciphertext){
+
 	int i = 0;
 	uint64_t pi;
+	uint64_t ci;
 	
-	while(ptlen >= RATE){
-		pi = loadBytes(plaintext + i*1, 1);
-		//xor ai with first r bits Sr of S
-		s->x[0] ^= (pi << 56);
+	while(ptlen > RATE){
 
+		pi = loadBytes(plaintext + i*8, 8);
+		cout<<"pi: "<<bitset<64>(pi)<<endl;
+		s->x[0] ^= pi;
+		ci = s->x[0];
+		storeBytes(ciphertext + i*8, ci, ptlen);
+		P6(s);	
 
-		// P6(s);	
 		ptlen -= RATE;
 		i += 1;
 	}
 
-	pi = loadBytes(plaintext + i*8, 1);
-	pi = ((pi << 1) | 1) << (RATE-ptlen-1);		// P||1||{0}*(r-1-(|P| mod r))
-	s->x[0] ^= (pi << 56);
-	P6(s);
+	if(ptlen < RATE){
+		pi = ((loadBytes(plaintext + i*8, ptlen) << 1) | 1 ) << ((RATE - ptlen)*8 - 1);
+	} else {
+		pi = loadBytes(plaintext + i*8, 8);
+	}
+
+	s->x[0] ^= pi;
+	ci = s->x[0];
+	storeBytes(ciphertext + i*8, ci, ptlen);
 
 }

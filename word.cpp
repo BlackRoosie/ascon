@@ -14,6 +14,7 @@ void randomBytes(unsigned char* bytes, int n) {
 	}
 }
 
+//to creating 64bit word
 uint64_t loadBytes(unsigned char bytes[], int n){
 
 	uint64_t word = 0;
@@ -23,4 +24,12 @@ uint64_t loadBytes(unsigned char bytes[], int n){
 	}
 
 	return word;
+}
+
+void storeBytes(unsigned char* bytes, uint64_t word, int n){
+	
+	for(int i = 0; i < n; i++){
+		bytes[i] = (uint8_t)(word >> (56 - i*8));
+	}
+
 }
