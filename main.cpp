@@ -4,13 +4,45 @@
 #include "constants.h"
 #include "word.cpp"
 #include "state.h"
-#include "encryption.cpp"
+#include "procedures.cpp"
 #include "permutations.h"
 #include <bitset>
 
 using namespace std;
 
-void test_encryption(){
+void encryption(unsigned char* key, unsigned char* nonce, unsigned char* ad, int adlen, unsigned char* plaintext, int ptlen, unsigned char* ciphertext, unsigned char* tag){
+	
+	ascon_state S = initialization(key, nonce);
+	processing_AD(&S, ad, adlen);
+	processing_plaintext(&S, plaintext, ptlen, ciphertext);
+	finalization(&S, key, tag);
+}
+
+void decryption(unsigned char* key, unsigned char* nonce, unsigned char* ad, int adlen, unsigned char* ciphertext, int ctlen, unsigned char* plaintext, unsigned char* tag, unsigned char* tag_encrypted){
+	
+	ascon_state S = initialization(key, nonce);
+	processing_AD(&S, ad, adlen);
+	processing_ciphertext(&S, ciphertext, ctlen, plaintext);
+	// processing_plaintext(&S, plaintext, ptlen, ciphertext);
+	finalization(&S, key, tag);
+
+	bool tag_equality = true;
+	for(int i = 0; i < 16; i++){
+		if(tag[i] != tag_encrypted[i]){
+			tag_equality = false;
+			break;
+		}
+	}
+
+	if(tag_equality)
+		for(int i = 0; i < ctlen; i++)
+			cout<<plaintext[i]<<'\t';
+	else
+		cout<<"Different tags"<<endl;
+
+}
+
+void test(){
 
 	unsigned char key[KEYBYTES];
 	unsigned char nonce[16];
@@ -59,6 +91,7 @@ void test_encryption(){
 	int ptlen = sizeof(plain);
 
 	unsigned char cipher[ptlen];
+	unsigned char plainEncrypted[ptlen];
 
 	cout<<"INITIALIZATION"<<endl;
 	ascon_state S = initialization(key, nonce);
@@ -88,15 +121,66 @@ void test_encryption(){
 	for(int i = 0; i < 16; i++)
 		cout<<bitset<8>(tag[i])<<'\t';
 
+	cout<<endl;
+	cout<<"----------------DECRYPTION---------------------"<<endl;
+	cout<<"INITIALIZATION"<<endl;
+	S = initialization(key, nonce);
+	// for(int i = 0; i < 5; i ++)
+	// 	cout<<S.x[i]<<endl;
+		// cout<<bitset<64>(S.x[i])<<endl;
+
+	cout<<endl;
+	cout<<"PROCESSING AD"<<endl;
+	processing_AD(&S, ad, adlen);
+	// for(int i = 0; i < 5; i ++)
+	// 	cout<<S.x[i]<<endl;
+
+	cout<<endl;
+	cout<<"PROCESSING CIPHERTEXT"<<endl;
+	processing_ciphertext(&S, cipher, ptlen, plainEncrypted);
+	// for(int i = 0; i < 5; i ++)
+	// 	cout<<S.x[i]<<endl;
+
+	cout<<endl;
+	cout<<"FINALIZATION"<<endl;
+	unsigned char tag_to_decrypt[16];
+	finalization(&S, key, tag_to_decrypt);
+	// for(int i = 0; i < 5; i ++)
+	// 	cout<<S.x[i]<<endl;
+
+	// cout<<endl<<"tag:"<<endl;
+	// for(int i = 0; i < 16; i++)
+	// 	cout<<bitset<8>(tag_to_decrypt[i])<<'\t';
+
+	cout<<endl;
+	bool tag_equality = true;
+	for(int i = 0; i < 16; i++){
+		if(tag[i] != tag_to_decrypt[i]){
+			tag_equality = false;
+			break;
+		}
+	}
+
+	cout<<endl;
+	if(tag_equality)
+		for(int i = 0; i < ptlen; i++)
+			cout<<plainEncrypted[i]<<'\t';
+	else
+		cout<<"Different tags"<<endl;
 
 }
-
 
 int main() {
 	cout<<endl;
 
 	srand(time(NULL));
-	test_encryption();
+	test();
+
+	// unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
+	// int adlen = sizeof(ad);		//in bytes
+
+	// unsigned char plain[5] = {'a', 's', 'c', 'o', 'n'};
+	// int ptlen = sizeof(plain);
 
 	// unsigned char key[KEYBYTES];
 	// unsigned char nonce[16];
@@ -104,9 +188,12 @@ int main() {
 	// randomBytes(key, KEYBYTES);
 	// randomBytes(nonce, 16);
 
-	// unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
-	// ascon_state S = initialization(key, nonce);
-	// processing_AD(&S, ad);
+	// unsigned char cipher[ptlen];
+	// unsigned char tag[16];
+
+	// encryption(key, nonce, ad, adlen, plain, ptlen, cipher, tag);
+
+	
 
 
 	return 0;

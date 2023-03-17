@@ -1,5 +1,5 @@
-#ifndef ENCRYPTION_H
-#define ENCRYPTION_H
+#ifndef PROCEDURES_H
+#define PROCEDURES_H
 
 #include <iostream>
 #include "constants.h"
