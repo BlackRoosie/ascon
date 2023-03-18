@@ -2,8 +2,6 @@
 #include "word.h"
 #include "state.h"
 
-#include<bitset>
-
 using namespace std;
 
 void randomBytes(unsigned char* bytes, int n) {

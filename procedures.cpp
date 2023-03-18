@@ -5,8 +5,6 @@
 #include "word.h"
 #include "permutations.cpp"
 
-#include <bitset>
-
 using namespace std;
 
 ascon_state initialization(unsigned char key[], unsigned char nonce[]) {
@@ -38,7 +36,6 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 		while(adlen >= RATE){
 
 			ai = loadBytes(ad + i*8, 8);
-			// cout<<"ai: "<<bitset<64>(ai)<<endl;
 			s->x[0] ^= ai;
 			P6(s);	
 			adlen -= RATE;
@@ -48,7 +45,6 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 		//checking after while if there is still bits to create last block
 		if(adlen > 0){
 			ai = ((loadBytes(ad + i*8, adlen) << 1) | 1 ) << ((RATE - adlen)*8 - 1);
-			// cout<<"ai: "<<bitset<64>(ai)<<endl;
 			s->x[0] ^= ai;
 			P6(s);
 		}
@@ -67,7 +63,6 @@ void processing_plaintext(ascon_state* s, unsigned char* plaintext, int ptlen, u
 	while(ptlen > RATE){
 
 		pi = loadBytes(plaintext + i*8, 8);
-		cout<<"pi: "<<bitset<64>(pi)<<endl;
 		s->x[0] ^= pi;
 		ci = s->x[0];
 		storeBytes(ciphertext + i*8, ci, ptlen);
@@ -88,7 +83,7 @@ void processing_plaintext(ascon_state* s, unsigned char* plaintext, int ptlen, u
 
 }
 
-void processing_ciphertext(ascon_state* s, unsigned char* ciphertext, int ctlen, unsigned char* plaintext){
+void processing_ciphertext(ascon_state* s, unsigned char* ciphertext, int ctlen, unsigned char* plaintextDecrypted){
 
 	int i = 0;
 	uint64_t padding;
@@ -97,7 +92,7 @@ void processing_ciphertext(ascon_state* s, unsigned char* ciphertext, int ctlen,
 	while(ctlen > RATE){
 
 		ci = loadBytes(ciphertext + i*8, 8);
-		storeBytes(plaintext + i*8, s->x[0] ^ ci, ctlen);
+		storeBytes(plaintextDecrypted + i*8, s->x[0] ^ ci, ctlen);
 		s->x[0] = ci;
 		P6(s);	
 
@@ -106,12 +101,13 @@ void processing_ciphertext(ascon_state* s, unsigned char* ciphertext, int ctlen,
 	}
 
 	ci = loadBytes(ciphertext + i*8, ctlen);
-	storeBytes(plaintext + i*8, s->x[0] ^ (ci << (8-ctlen)*8), ctlen);
+	storeBytes(plaintextDecrypted + i*8, s->x[0] ^ (ci << (8-ctlen)*8), ctlen);
 
 	padding = createPadding(ctlen);
 
 	if(ctlen < RATE){
-		s->x[0] = (s->x[0] ^ ((s->x[0] & padding) ^ (1 << ((RATE-ctlen)*8 - 1))) ^ (ci << ((RATE - ctlen)*8)));		//sr xor (Pt || 1 || {0}*) 
+		//sr ^ (Pt || 1 || {0}*) = Sr ^ (Ct bits of Sr ||1||{0}*) ^ (Ct||{0})
+		s->x[0] = (s->x[0] ^ ((s->x[0] & padding) | ((uint64_t)(1) << ((RATE-ctlen)*8 - 1))) ^ (ci << ((RATE - ctlen)*8)));		 
 	} 
 	else {
 		s->x[0] ^= (s->x[0] ^ ci);
