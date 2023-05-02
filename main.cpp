@@ -41,6 +41,8 @@ void decryption(unsigned char* key, unsigned char* nonce, unsigned char* ad, int
 }
 
 int main() {
+
+	//helping things - setting key, tag, nonce, msg
 	srand(time(NULL));
 	unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
 	int adlen = sizeof(ad);		//in bytes

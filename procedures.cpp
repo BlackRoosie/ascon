@@ -5,6 +5,8 @@
 #include "word.h"
 #include "permutations.cpp"
 
+#include<bitset>
+
 using namespace std;
 
 ascon_state initialization(unsigned char key[], unsigned char nonce[]) {
@@ -45,9 +47,11 @@ void processing_AD(ascon_state* s, unsigned char* ad, int adlen){
 		//checking after while if there is still bits to create last block
 		if(adlen > 0){
 			ai = ((loadBytes(ad + i*8, adlen) << 1) | 1 ) << ((RATE - adlen)*8 - 1);
-			s->x[0] ^= ai;
-			P6(s);
+		} else {
+			ai = ((uint64_t)(1) << (RATE*8 - 1));
 		}
+		s->x[0] ^= ai;
+		P6(s);
 	}
 
 	s->x[4] ^= 1;
@@ -60,7 +64,7 @@ void processing_plaintext(ascon_state* s, unsigned char* plaintext, int ptlen, u
 	uint64_t pi;
 	uint64_t ci;
 	
-	while(ptlen > RATE){
+	while(ptlen >= RATE){
 
 		pi = loadBytes(plaintext + i*8, 8);
 		s->x[0] ^= pi;
@@ -72,10 +76,10 @@ void processing_plaintext(ascon_state* s, unsigned char* plaintext, int ptlen, u
 		i += 1;
 	}
 
-	if(ptlen < RATE){
+	if(ptlen > 0){
 		pi = ((loadBytes(plaintext + i*8, ptlen) << 1) | 1 ) << ((RATE - ptlen)*8 - 1);
 	} else {
-		pi = loadBytes(plaintext + i*8, 8);
+		pi = ((uint64_t)(1) << (RATE*8 - 1));
 	}
 
 	ci = s->x[0] ^= pi;
@@ -89,7 +93,7 @@ void processing_ciphertext(ascon_state* s, unsigned char* ciphertext, int ctlen,
 	uint64_t padding;
 	uint64_t ci;
 	
-	while(ctlen > RATE){
+	while(ctlen >= RATE){
 
 		ci = loadBytes(ciphertext + i*8, 8);
 		storeBytes(plaintextDecrypted + i*8, s->x[0] ^ ci, ctlen);
