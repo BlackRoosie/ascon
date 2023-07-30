@@ -32,6 +32,7 @@
     <ClCompile Include="procedures.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="word.cpp" />
+    <ClCompile Include="api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
