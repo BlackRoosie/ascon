@@ -1,5 +1,5 @@
-#include "permutations.h"
-#include "state.h"
+#include "permutations.hpp"
+#include "state.hpp"
 
 #include <iostream>
 

@@ -1,5 +1,5 @@
-#ifndef CONSTANT_H
-#define CONSTANT_H
+#ifndef CONSTANT_HPP
+#define CONSTANT_HPP
 
 #include <stdint.h>
 
@@ -10,4 +10,4 @@ const int ROUNDS_PB = 6;
 
 #define IV (((uint64_t)(KEYBYTES * 8) << 56) | ((uint64_t)(RATE * 8) << 48) | ((uint64_t)(ROUNDS_PA) << 40) | ((uint64_t)(ROUNDS_PB) << 32))
 
-#endif // !CONSTANT_H
+#endif // !CONSTANT_HPP

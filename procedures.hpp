@@ -1,11 +1,10 @@
-#ifndef PROCEDURES_H
-#define PROCEDURES_H
+#ifndef PROCEDURES_HPP
+#define PROCEDURES_HPP
 
 #include <iostream>
-#include "constants.h"
-#include "state.h"
-#include "word.h"
-#include "permutations.h"
+#include "constants.hpp"
+#include "state.hpp"
+#include "permutations.hpp"
 
 using namespace std;
 

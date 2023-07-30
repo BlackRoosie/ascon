@@ -1,9 +1,9 @@
 #include <iostream>
-#include "procedures.h"
-#include "constants.h"
-#include "state.h"
-#include "word.h"
-#include "permutations.cpp"
+#include "procedures.hpp"
+#include "constants.hpp"
+#include "state.hpp"
+#include "word.hpp"
+#include "permutations.hpp"
 
 #include<bitset>
 

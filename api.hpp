@@ -1,11 +1,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include "constants.h"
-#include "word.cpp"
-#include "state.h"
-#include "procedures.cpp"
-#include "permutations.h"
+#include "constants.hpp"
+#include "word.hpp"
+#include "state.hpp"
+#include "procedures.hpp"
+#include "permutations.hpp"
 
 using namespace std;
 
@@ -40,30 +40,3 @@ void decryption(unsigned char* key, unsigned char* nonce, unsigned char* ad, int
 
 }
 
-int main() {
-
-	//helping things - setting key, tag, nonce, msg
-	srand(time(NULL));
-	unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
-	int adlen = sizeof(ad);		//in bytes
-
-	unsigned char plain[5] = {'a', 's', 'c', 'o', 'n'};
-	int msglen = sizeof(plain);
-
-	unsigned char key[KEYBYTES];
-	unsigned char nonce[16];
-
-	randomBytes(key, KEYBYTES);
-	randomBytes(nonce, 16);
-
-	unsigned char cipher[msglen];
-	unsigned char plaintextDecryted[msglen];
-	unsigned char tagEncryption[16];
-	unsigned char tagDecryption[16];
-
-
-	encryption(key, nonce, ad, adlen, plain, msglen, cipher, tagEncryption);
-	decryption(key, nonce, ad, adlen, cipher, msglen, plaintextDecryted, tagEncryption, tagDecryption);
-
-	return 0;
-}

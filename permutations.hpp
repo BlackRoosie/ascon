@@ -1,7 +1,7 @@
-#ifndef PERMUTATIONS_H
-#define PERMUTATIONS_H
+#ifndef PERMUTATIONS_HPP
+#define PERMUTATIONS_HPP
 
-#include "state.h"
+#include "state.hpp"
 
 using namespace std;
 
