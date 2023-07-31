@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="api.hpp" />
     <ClInclude Include="constants.hpp" />
+    <ClInclude Include="hash.hpp" />
     <ClInclude Include="permutations.hpp" />
     <ClInclude Include="procedures.hpp" />
     <ClInclude Include="state.hpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="test.cpp" />
     <ClCompile Include="word.cpp" />
     <ClCompile Include="api.cpp" />
+    <ClCompile Include="hash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />

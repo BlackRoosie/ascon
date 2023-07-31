@@ -1,7 +1,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include "constants.hpp"
 #include "api.hpp"
+#include "hash.hpp"
+
+#include <bitset>
 
 using namespace std;
 
@@ -16,7 +20,6 @@ void randomBytes(unsigned char* bytes, int n) {
 }
 
 int main() {
-
 	//helping things - setting key, tag, nonce, msg
 	srand(time(NULL));
 	unsigned char ad[5] = {'A', 'S', 'C', 'O', 'N'};
@@ -39,6 +42,13 @@ int main() {
 
 	encryption(key, nonce, ad, adlen, plain, msglen, cipher, tagEncryption);
 	decryption(key, nonce, ad, adlen, cipher, msglen, plaintextDecryted, tagEncryption, tagDecryption);
+
+	cout << endl;
+	unsigned char hash[HASH_H];
+	hashing(plain, msglen, hash);
+	cout << "hash: ";
+	for (int i = 0; i < HASH_H; i++)
+		cout << hex << int(hash[i]);
 
 	return 0;
 }
